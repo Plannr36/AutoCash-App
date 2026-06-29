@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowUpRight, ArrowDownRight, Users, Calendar, Wallet, CheckCircle, AlertTriangle, TrendingUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowUpRight, ArrowDownRight, Users, Calendar, Wallet, CheckCircle, AlertTriangle, TrendingUp, Trophy, Crown, Medal } from 'lucide-react';
 import { Transaction, Member, Activity } from '../types';
 
 interface DashboardOverviewProps {
@@ -17,6 +17,34 @@ export default function DashboardOverview({
   onTabChange,
   onOpenAddTransaction,
 }: DashboardOverviewProps) {
+  // Tab Leaderboard State
+  const [leaderboardTab, setLeaderboardTab] = useState<'terbanyak' | 'rutin'>('terbanyak');
+
+  // Calculations for Leaderboard
+  const topPayers = [...members]
+    .sort((a, b) => b.totalPaid - a.totalPaid)
+    .slice(0, 5);
+
+  const topRutinPayers = [...members]
+    .sort((a, b) => {
+      // Weight by status: Lunas > Belum Lunas > Menunggak
+      const statusWeight = { 'Lunas': 3, 'Belum Lunas': 2, 'Menunggak': 1 };
+      const weightA = statusWeight[a.status] || 0;
+      const weightB = statusWeight[b.status] || 0;
+      if (weightA !== weightB) {
+        return weightB - weightA;
+      }
+      
+      // If both are Lunas, sort by lastPaymentDate (earlier date means paid sooner in the month!)
+      if (a.lastPaymentDate && b.lastPaymentDate) {
+        return a.lastPaymentDate.localeCompare(b.lastPaymentDate);
+      }
+      if (a.lastPaymentDate) return -1;
+      if (b.lastPaymentDate) return 1;
+      return 0;
+    })
+    .slice(0, 5);
+
   // Calculations
   const totalIncome = transactions
     .filter((t) => t.type === 'pemasukan')
@@ -286,6 +314,132 @@ export default function DashboardOverview({
             >
               Kirim Tagihan / Kelola Anggota
             </button>
+          </div>
+
+          {/* Peringkat Kas (Leaderboard) */}
+          <div className="bg-white rounded-xl shadow-xs border border-slate-100 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h4 className="text-sm font-bold text-slate-950 flex items-center">
+                  <Trophy className="h-4 w-4 text-amber-500 mr-2" />
+                  Peringkat Kas Anggota
+                </h4>
+                <p className="text-[11px] text-slate-500">Apresiasi kedisiplinan iuran warga</p>
+              </div>
+            </div>
+
+            {/* Tab Buttons */}
+            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-50 rounded-lg mb-4 text-xs font-semibold">
+              <button
+                onClick={() => setLeaderboardTab('terbanyak')}
+                className={`py-1.5 px-2 rounded-md transition-all text-center ${
+                  leaderboardTab === 'terbanyak'
+                    ? 'bg-white text-indigo-600 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Terbanyak
+              </button>
+              <button
+                onClick={() => setLeaderboardTab('rutin')}
+                className={`py-1.5 px-2 rounded-md transition-all text-center ${
+                  leaderboardTab === 'rutin'
+                    ? 'bg-white text-indigo-600 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Terpatuh & Rutin
+              </button>
+            </div>
+
+            {/* List of ranked members */}
+            <div className="space-y-3">
+              {(leaderboardTab === 'terbanyak' ? topPayers : topRutinPayers).map((member, index) => {
+                const rank = index + 1;
+                
+                // Styling for different ranks
+                let rankBadgeStyles = "bg-slate-50 text-slate-500 border border-slate-100";
+                let rankIcon = null;
+                
+                if (rank === 1) {
+                  rankBadgeStyles = "bg-amber-50 text-amber-700 border border-amber-200 ring-2 ring-amber-400/10";
+                  rankIcon = <Crown className="h-3 w-3 text-amber-500 inline-block mr-0.5" />;
+                } else if (rank === 2) {
+                  rankBadgeStyles = "bg-slate-100 text-slate-700 border border-slate-200 ring-2 ring-slate-400/5";
+                  rankIcon = <Medal className="h-3 w-3 text-slate-400 inline-block mr-0.5" />;
+                } else if (rank === 3) {
+                  rankBadgeStyles = "bg-orange-50 text-orange-700 border border-orange-100 ring-2 ring-orange-400/5";
+                  rankIcon = <Medal className="h-3 w-3 text-orange-600 inline-block mr-0.5" />;
+                }
+
+                // Helper to get initials
+                const initials = member.name
+                  .split(' ')
+                  .map((n) => n[0])
+                  .slice(0, 2)
+                  .join('')
+                  .toUpperCase();
+
+                // Format payment date
+                const formatPaymentDate = (dateStr?: string) => {
+                  if (!dateStr) return 'Belum bayar';
+                  const date = new Date(dateStr);
+                  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                };
+
+                return (
+                  <div
+                    key={member.id}
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group"
+                  >
+                    <div className="flex items-center space-x-3 min-w-0">
+                      {/* Rank number / Badge */}
+                      <span className={`w-6 h-6 shrink-0 flex items-center justify-center rounded-full text-xs font-bold ${rankBadgeStyles}`}>
+                        {rank}
+                      </span>
+
+                      {/* Avatar initials */}
+                      <div className="w-8 h-8 shrink-0 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">
+                        {initials}
+                      </div>
+
+                      {/* Name & Subtitle */}
+                      <div className="min-w-0">
+                        <h5 className="text-xs font-bold text-slate-800 flex items-center gap-1 truncate">
+                          {rankIcon}
+                          <span className="truncate">{member.name}</span>
+                        </h5>
+                        <p className="text-[10px] text-slate-500 truncate">
+                          {leaderboardTab === 'terbanyak' 
+                            ? (member.status === 'Lunas' ? 'Lunas Bulan Ini' : `Status: ${member.status}`)
+                            : `Terakhir bayar: ${member.lastPaymentDate ? formatPaymentDate(member.lastPaymentDate) : '-'}`
+                          }
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Value detail */}
+                    <div className="text-right shrink-0">
+                      {leaderboardTab === 'terbanyak' ? (
+                        <span className="text-xs font-extrabold text-slate-900 bg-slate-50 group-hover:bg-indigo-50 group-hover:text-indigo-600 px-2 py-1 rounded border border-slate-100 transition-all">
+                          {formatIDR(member.totalPaid).replace(/\,00$/, '')}
+                        </span>
+                      ) : (
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                          member.status === 'Lunas'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                            : member.status === 'Belum Lunas'
+                            ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                            : 'bg-rose-50 text-rose-700 border border-rose-100'
+                        }`}>
+                          {member.status}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Quick Actions Panel */}
