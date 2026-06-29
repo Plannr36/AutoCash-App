@@ -24,6 +24,7 @@ import MemberManager from './components/MemberManager';
 import ReportLPJ from './components/ReportLPJ';
 import AuditLogViewer from './components/AuditLogViewer';
 import CommunicationForum from './components/CommunicationForum';
+import LoginForm from './components/LoginForm';
 
 // Dummy initial data
 import {
@@ -41,10 +42,35 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Authentication Mock (Allows switching between officers for demo)
-  const [currentOfficer, setCurrentOfficer] = useState('Mirachel Lovan');
-  const [currentRole, setCurrentRole] = useState<'Bendahara 1' | 'Bendahara 2' | 'Sekretaris 1' | 'Sekretaris 2' | 'Wakil Ketua' | 'Ketua'>('Bendahara 2');
+  // Authentication State with LocalStorage persistence
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    return localStorage.getItem('kt_is_logged_in') === 'true';
+  });
+
+  const [currentOfficer, setCurrentOfficer] = useState<string>(() => {
+    return localStorage.getItem('kt_current_officer') || 'Mirachel Lovan';
+  });
+
+  const [currentRole, setCurrentRole] = useState<'Bendahara 1' | 'Bendahara 2' | 'Sekretaris 1' | 'Sekretaris 2' | 'Wakil Ketua' | 'Ketua'>(() => {
+    return (localStorage.getItem('kt_current_role') as any) || 'Bendahara 2';
+  });
+
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
+  const handleLoginSuccess = (officerName: string, roleName: typeof currentRole) => {
+    setCurrentOfficer(officerName);
+    setCurrentRole(roleName);
+    setIsLoggedIn(true);
+    localStorage.setItem('kt_is_logged_in', 'true');
+    localStorage.setItem('kt_current_officer', officerName);
+    localStorage.setItem('kt_current_role', roleName);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('kt_is_logged_in');
+    setShowProfileDropdown(false);
+  };
 
   // Core App State (With localStorage backing)
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -236,6 +262,8 @@ export default function App() {
     setCurrentOfficer(officerName);
     setCurrentRole(roleName);
     setShowProfileDropdown(false);
+    localStorage.setItem('kt_current_officer', officerName);
+    localStorage.setItem('kt_current_role', roleName);
   };
 
   const sidebarItems = [
@@ -246,6 +274,10 @@ export default function App() {
     { name: 'Koordinasi', icon: MessageSquare },
     { name: 'Log Riwayat', icon: History },
   ];
+
+  if (!isLoggedIn) {
+    return <LoginForm onLoginSuccess={handleLoginSuccess} />;
+  }
 
   return (
     <div className="min-h-screen flex text-slate-800 antialiased font-sans">
@@ -373,6 +405,14 @@ export default function App() {
                   >
                     <span>Bramandika R. (Sekr 2)</span>
                     {currentOfficer === 'Bramandika Ramavirio' && <span className="text-indigo-600 font-bold">✓</span>}
+                  </button>
+                  <div className="border-t border-slate-100 my-1"></div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-bold flex items-center gap-2 cursor-pointer transition-colors"
+                  >
+                    <LogOut className="h-4 w-4 text-rose-500" />
+                    <span>Keluar Sistem</span>
                   </button>
                 </div>
               )}

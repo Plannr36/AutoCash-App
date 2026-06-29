@@ -264,10 +264,9 @@ export default function DashboardOverview({
           </div>
         </div>
 
-        {/* Right Column: Status Member Alerts & Action Shortcuts */}
-        <div className="space-y-6">
-          {/* Member Fee Alerts */}
-          <div className="bg-white rounded-xl shadow-xs border border-slate-100 p-6">
+        {/* Right Column: Member Fee Alerts */}
+        <div className="bg-white rounded-xl shadow-xs border border-slate-100 p-6 flex flex-col justify-between">
+          <div>
             <h4 className="text-base font-bold text-slate-950 mb-4 flex items-center">
               <AlertTriangle className="h-5 w-5 text-amber-500 mr-2" />
               Notifikasi Pembayaran Kas
@@ -307,18 +306,23 @@ export default function DashboardOverview({
                 </div>
               )}
             </div>
-
-            <button
-              onClick={() => onTabChange('Anggota')}
-              className="mt-4 w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors flex justify-center items-center"
-            >
-              Kirim Tagihan / Kelola Anggota
-            </button>
           </div>
 
-          {/* Peringkat Kas (Leaderboard) */}
-          <div className="bg-white rounded-xl shadow-xs border border-slate-100 p-6">
-            <div className="flex justify-between items-center mb-4">
+          <button
+            onClick={() => onTabChange('Anggota')}
+            className="mt-4 w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors flex justify-center items-center shrink-0"
+          >
+            Kirim Tagihan / Kelola Anggota
+          </button>
+        </div>
+      </div>
+
+      {/* Row 2: Leaderboard (Horizontal Layout) & Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        {/* Peringkat Kas (Leaderboard) takes 2 columns, spanning horizontally */}
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-xs border border-slate-100 p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <div>
                 <h4 className="text-sm font-bold text-slate-950 flex items-center">
                   <Trophy className="h-4 w-4 text-amber-500 mr-2" />
@@ -326,34 +330,34 @@ export default function DashboardOverview({
                 </h4>
                 <p className="text-[11px] text-slate-500">Apresiasi kedisiplinan iuran warga</p>
               </div>
+
+              {/* Tab Buttons */}
+              <div className="grid grid-cols-2 gap-1 p-1 bg-slate-50 rounded-lg text-xs font-semibold w-full sm:w-auto min-w-[200px]">
+                <button
+                  onClick={() => setLeaderboardTab('terbanyak')}
+                  className={`py-1.5 px-3 rounded-md transition-all text-center ${
+                    leaderboardTab === 'terbanyak'
+                      ? 'bg-white text-indigo-600 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Terbanyak
+                </button>
+                <button
+                  onClick={() => setLeaderboardTab('rutin')}
+                  className={`py-1.5 px-3 rounded-md transition-all text-center ${
+                    leaderboardTab === 'rutin'
+                      ? 'bg-white text-indigo-600 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Terpatuh & Rutin
+                </button>
+              </div>
             </div>
 
-            {/* Tab Buttons */}
-            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-50 rounded-lg mb-4 text-xs font-semibold">
-              <button
-                onClick={() => setLeaderboardTab('terbanyak')}
-                className={`py-1.5 px-2 rounded-md transition-all text-center ${
-                  leaderboardTab === 'terbanyak'
-                    ? 'bg-white text-indigo-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Terbanyak
-              </button>
-              <button
-                onClick={() => setLeaderboardTab('rutin')}
-                className={`py-1.5 px-2 rounded-md transition-all text-center ${
-                  leaderboardTab === 'rutin'
-                    ? 'bg-white text-indigo-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Terpatuh & Rutin
-              </button>
-            </div>
-
-            {/* List of ranked members */}
-            <div className="space-y-3">
+            {/* List of ranked members - Horizontal Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {(leaderboardTab === 'terbanyak' ? topPayers : topRutinPayers).map((member, index) => {
                 const rank = index + 1;
                 
@@ -390,42 +394,40 @@ export default function DashboardOverview({
                 return (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group"
+                    className="flex flex-col items-center text-center p-3.5 rounded-xl bg-slate-50/50 border border-slate-100 hover:bg-slate-50 hover:border-slate-200 transition-all group relative"
                   >
-                    <div className="flex items-center space-x-3 min-w-0">
-                      {/* Rank number / Badge */}
-                      <span className={`w-6 h-6 shrink-0 flex items-center justify-center rounded-full text-xs font-bold ${rankBadgeStyles}`}>
-                        {rank}
-                      </span>
+                    {/* Rank number / Badge */}
+                    <span className={`absolute top-2 left-2 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-extrabold ${rankBadgeStyles}`}>
+                      {rank}
+                    </span>
 
-                      {/* Avatar initials */}
-                      <div className="w-8 h-8 shrink-0 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">
-                        {initials}
-                      </div>
+                    {/* Avatar initials */}
+                    <div className="w-10 h-10 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 mb-2 mt-1">
+                      {initials}
+                    </div>
 
-                      {/* Name & Subtitle */}
-                      <div className="min-w-0">
-                        <h5 className="text-xs font-bold text-slate-800 flex items-center gap-1 truncate">
-                          {rankIcon}
-                          <span className="truncate">{member.name}</span>
-                        </h5>
-                        <p className="text-[10px] text-slate-500 truncate">
-                          {leaderboardTab === 'terbanyak' 
-                            ? (member.status === 'Lunas' ? 'Lunas Bulan Ini' : `Status: ${member.status}`)
-                            : `Terakhir bayar: ${member.lastPaymentDate ? formatPaymentDate(member.lastPaymentDate) : '-'}`
-                          }
-                        </p>
-                      </div>
+                    {/* Name & Subtitle */}
+                    <div className="w-full min-w-0">
+                      <h5 className="text-xs font-bold text-slate-800 flex items-center justify-center gap-0.5">
+                        {rankIcon}
+                        <span className="truncate max-w-[100px]" title={member.name}>{member.name}</span>
+                      </h5>
+                      <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                        {leaderboardTab === 'terbanyak' 
+                          ? (member.status === 'Lunas' ? 'Lunas Bulan Ini' : `Status: ${member.status}`)
+                          : `${member.lastPaymentDate ? formatPaymentDate(member.lastPaymentDate) : '-'}`
+                        }
+                      </p>
                     </div>
 
                     {/* Value detail */}
-                    <div className="text-right shrink-0">
+                    <div className="mt-3 w-full">
                       {leaderboardTab === 'terbanyak' ? (
-                        <span className="text-xs font-extrabold text-slate-900 bg-slate-50 group-hover:bg-indigo-50 group-hover:text-indigo-600 px-2 py-1 rounded border border-slate-100 transition-all">
+                        <span className="text-[11px] font-extrabold text-slate-900 bg-white group-hover:bg-indigo-50 group-hover:text-indigo-600 px-1.5 py-1 rounded border border-slate-200 transition-all block w-full truncate">
                           {formatIDR(member.totalPaid).replace(/\,00$/, '')}
                         </span>
                       ) : (
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full block w-full text-center ${
                           member.status === 'Lunas'
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
                             : member.status === 'Belum Lunas'
@@ -441,28 +443,30 @@ export default function DashboardOverview({
               })}
             </div>
           </div>
+        </div>
 
-          {/* Quick Actions Panel */}
-          <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-xl p-6 text-white shadow-xs">
+        {/* Quick Actions Panel */}
+        <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-xl p-6 text-white shadow-xs flex flex-col justify-between">
+          <div>
             <h4 className="text-base font-bold mb-2">Aksi Cepat Pengurus</h4>
             <p className="text-xs text-indigo-200 mb-5">Pencatatan real-time memperkecil risiko selisih hitung fisik.</p>
+          </div>
 
-            <div className="space-y-3">
-              <button
-                onClick={onOpenAddTransaction}
-                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
-              >
-                <Wallet className="h-4 w-4" />
-                Catat Pemasukan / Pengeluaran
-              </button>
-              <button
-                onClick={() => onTabChange('Laporan')}
-                className="w-full py-2.5 bg-white/10 hover:bg-white/15 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                <Calendar className="h-4 w-4" />
-                Draf Laporan Pertanggungjawaban (LPJ)
-              </button>
-            </div>
+          <div className="space-y-3">
+            <button
+              onClick={onOpenAddTransaction}
+              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
+            >
+              <Wallet className="h-4 w-4" />
+              Catat Pemasukan / Pengeluaran
+            </button>
+            <button
+              onClick={() => onTabChange('Laporan')}
+              className="w-full py-2.5 bg-white/10 hover:bg-white/15 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Calendar className="h-4 w-4" />
+              Draf Laporan Pertanggungjawaban (LPJ)
+            </button>
           </div>
         </div>
       </div>
