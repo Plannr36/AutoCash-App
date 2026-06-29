@@ -1,0 +1,172 @@
+import { Member, Transaction, Activity, AuditLog, ForumMessage } from './types';
+
+export const INITIAL_MEMBERS: Member[] = [
+  { id: 'M-01', name: 'Loris Oktaviano', phone: '081234567801', status: 'Lunas', totalPaid: 150000, lastPaymentDate: '2026-06-10' },
+  { id: 'M-02', name: 'Muhammad Lazarus Alifonda', phone: '081234567802', status: 'Lunas', totalPaid: 150000, lastPaymentDate: '2026-06-12' },
+  { id: 'M-03', name: 'Bramandika Ramavirio', phone: '081234567803', status: 'Belum Lunas', totalPaid: 100000, lastPaymentDate: '2026-05-15' },
+  { id: 'M-04', name: 'Retma Ayu Putri', phone: '081234567804', status: 'Lunas', totalPaid: 150000, lastPaymentDate: '2026-06-14' },
+  { id: 'M-05', name: 'Mirachel Lovan', phone: '081234567805', status: 'Lunas', totalPaid: 150000, lastPaymentDate: '2026-06-08' },
+  { id: 'M-06', name: 'Shafa Rifkika', phone: '081234567806', status: 'Menunggak', totalPaid: 50000, lastPaymentDate: '2026-03-02' },
+  { id: 'M-07', name: 'Rokhim', phone: '081234567807', status: 'Belum Lunas', totalPaid: 100000, lastPaymentDate: '2026-05-20' },
+  { id: 'M-08', name: 'Arga', phone: '081234567808', status: 'Menunggak', totalPaid: 0, lastPaymentDate: undefined },
+  { id: 'M-09', name: 'Budi Santoso', phone: '081234567809', status: 'Lunas', totalPaid: 150000, lastPaymentDate: '2026-06-18' },
+  { id: 'M-10', name: 'Adi Wijaya', phone: '081234567810', status: 'Belum Lunas', totalPaid: 50000, lastPaymentDate: '2026-04-10' },
+];
+
+export const INITIAL_ACTIVITIES: Activity[] = [
+  {
+    id: 'A-01',
+    name: 'Rapat Koordinasi Bulanan',
+    date: '2026-06-05',
+    allocatedBudget: 150000,
+    actualExpense: 120000,
+    status: 'Selesai',
+    description: 'Rapat koordinasi rutin pengurus untuk evaluasi program kerja bulanan.',
+  },
+  {
+    id: 'A-02',
+    name: 'Gotong Royong Kebersihan Kampung',
+    date: '2026-06-14',
+    allocatedBudget: 300000,
+    actualExpense: 280000,
+    status: 'Selesai',
+    description: 'Kerja bakti warga dan pemuda untuk pembersihan selokan dan fasilitas sosial.',
+  },
+  {
+    id: 'A-03',
+    name: 'Persiapan HUT RI Ke-81',
+    date: '2026-07-20',
+    allocatedBudget: 2000000,
+    actualExpense: 450000,
+    status: 'Berjalan',
+    description: 'Rangkaian lomba agustusan, dekorasi kampung, malam tirakatan, dan pentas seni.',
+  },
+];
+
+export const INITIAL_TRANSACTIONS: Transaction[] = [
+  {
+    id: 'T-01',
+    date: '2026-06-10',
+    time: '10:00',
+    type: 'pemasukan',
+    category: 'Iuran Rutin',
+    amount: 1000000,
+    description: 'Penyetoran kolektif iuran kas rutin anggota Karang Taruna bulan Juni',
+    createdBy: 'Retma Ayu Putri',
+  },
+  {
+    id: 'T-02',
+    date: '2026-06-11',
+    time: '14:30',
+    type: 'pemasukan',
+    category: 'Donasi / Sponsor',
+    amount: 500000,
+    description: 'Donasi sukarela dari Bapak RT 02 Debegan mendukung kegiatan pemuda',
+    createdBy: 'Mirachel Lovan',
+  },
+  {
+    id: 'T-03',
+    date: '2026-06-05',
+    time: '19:30',
+    type: 'pengeluaran',
+    category: 'Operasional Rapat',
+    amount: 120000,
+    description: 'Konsumsi snack dan minum untuk Rapat Koordinasi Bulanan',
+    activityName: 'Rapat Koordinasi Bulanan',
+    createdBy: 'Mirachel Lovan',
+  },
+  {
+    id: 'T-04',
+    date: '2026-06-15',
+    time: '16:00',
+    type: 'pemasukan',
+    category: 'Dana Usaha',
+    amount: 350000,
+    description: 'Hasil penyewaan inventaris tenda dan speaker Karang Taruna untuk acara tahlilan warga',
+    createdBy: 'Retma Ayu Putri',
+  },
+  {
+    id: 'T-05',
+    date: '2026-06-14',
+    time: '08:15',
+    type: 'pengeluaran',
+    category: 'Belanja Kegiatan',
+    amount: 280000,
+    description: 'Pembelian alat kebersihan (trash bag, sapu lidi, sabun) dan konsumsi es kelapa muda kerja bakti',
+    activityName: 'Gotong Royong Kebersihan Kampung',
+    createdBy: 'Mirachel Lovan',
+  },
+  {
+    id: 'T-06',
+    date: '2026-06-20',
+    time: '11:00',
+    type: 'pengeluaran',
+    category: 'Properti & Perlengkapan',
+    amount: 450000,
+    description: 'Uang muka (DP) sewa bambu, pembelian bendera umbul-umbul hias merah putih',
+    activityName: 'Persiapan HUT RI Ke-81',
+    createdBy: 'Mirachel Lovan',
+  },
+];
+
+export const INITIAL_AUDIT_LOGS: AuditLog[] = [
+  {
+    id: 'LOG-01',
+    timestamp: '2026-06-05 19:45',
+    user: 'Mirachel Lovan',
+    action: 'Tambah Transaksi',
+    details: 'Mencatat pengeluaran operasional rapat bulanan Rp120.000',
+  },
+  {
+    id: 'LOG-02',
+    timestamp: '2026-06-10 10:15',
+    user: 'Retma Ayu Putri',
+    action: 'Tambah Transaksi',
+    details: 'Mencatat pemasukan iuran rutin bulanan anggota Rp1.000.000',
+  },
+  {
+    id: 'LOG-03',
+    timestamp: '2026-06-11 14:35',
+    user: 'Mirachel Lovan',
+    action: 'Tambah Transaksi',
+    details: 'Mencatat donasi masuk dari Bpk. RT 02 Debegan Rp500.000',
+  },
+  {
+    id: 'LOG-04',
+    timestamp: '2026-06-14 08:20',
+    user: 'Mirachel Lovan',
+    action: 'Tambah Transaksi',
+    details: 'Mencatat pengeluaran gotong royong kebersihan kampung Rp280.000',
+  },
+];
+
+export const INITIAL_FORUM_MESSAGES: ForumMessage[] = [
+  {
+    id: 'FORUM-01',
+    timestamp: '2026-06-20 11:15',
+    author: 'Mirachel Lovan',
+    role: 'Bendahara 2',
+    content: 'Halo rekan-rekan, sudah saya catat DP perlengkapan bendera hias untuk HUT RI ya sebesar Rp450.000. Mohon divalidasi.',
+  },
+  {
+    id: 'FORUM-02',
+    timestamp: '2026-06-20 12:30',
+    author: 'Retma Ayu Putri',
+    role: 'Bendahara 1',
+    content: 'Sip, mantap mbak Mirachel. Bukti transfernya sudah diunggah sekalian ya? Biar gampang rekap LPJ-nya nanti.',
+  },
+  {
+    id: 'FORUM-03',
+    timestamp: '2026-06-20 12:45',
+    author: 'Mirachel Lovan',
+    role: 'Bendahara 2',
+    content: 'Sudah mbak Retma, foto kuitansi pembayaran DP-nya terlampir langsung di log transaksi T-06.',
+  },
+  {
+    id: 'FORUM-04',
+    timestamp: '2026-06-21 09:00',
+    author: 'Rokhim',
+    role: 'Wakil Ketua',
+    content: 'Terima kasih tim bendahara, laporannya sangat transparan. Pengurus lain juga bisa langsung memantau saldo akhir kita secara real-time.',
+  },
+];
