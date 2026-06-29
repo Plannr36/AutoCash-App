@@ -389,7 +389,7 @@ export default function App() {
         )}
 
         {/* Tab content space */}
-        <main className="flex-1 p-6 overflow-y-auto max-w-7xl w-full mx-auto print:p-0">
+        <main className="flex-1 p-6 overflow-y-auto w-full print:p-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
