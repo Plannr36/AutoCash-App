@@ -7,7 +7,7 @@ import {
   FileText,
   MessageSquare,
   History,
-  ShieldCheck,
+  Banknote,
   Menu,
   X,
   Bell,
@@ -499,8 +499,14 @@ export default function App() {
     { name: 'Log Riwayat', icon: History },
   ];
 
+  const handleRegisterOfficer = (newOfficer: typeof officers[0]) => {
+    const updated = [...officers, newOfficer];
+    setOfficers(updated);
+    localStorage.setItem('kt_officers', JSON.stringify(updated));
+  };
+
   if (!isLoggedIn) {
-    return <LoginForm onLoginSuccess={handleLoginSuccess} officers={officers} />;
+    return <LoginForm onLoginSuccess={handleLoginSuccess} officers={officers} onRegister={handleRegisterOfficer} />;
   }
 
   return (
@@ -513,9 +519,9 @@ export default function App() {
       >
         {/* Brand Header */}
         <div className="h-16 px-6 flex items-center gap-2 border-b border-slate-800 shrink-0">
-          <ShieldCheck className="h-6 w-6 text-indigo-500" />
+          <Banknote className="h-6 w-6 text-emerald-500" />
           <div>
-            <h1 className="text-xs font-bold text-white tracking-wide uppercase">Sistem Informasi Kas</h1>
+            <h1 className="text-xs font-bold text-white tracking-wide uppercase">AUTOCASH</h1>
             <p className="text-[10px] text-slate-400 font-medium">Karang Taruna Debegan</p>
           </div>
         </div>
@@ -534,7 +540,7 @@ export default function App() {
                 }}
                 className={`w-full py-2.5 px-4 rounded-lg text-xs font-semibold flex items-center gap-3 transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-md'
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950/25'
                     : 'hover:bg-slate-800/60 hover:text-white'
                 }`}
               >
