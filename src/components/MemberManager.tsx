@@ -7,6 +7,7 @@ interface MemberManagerProps {
   onUpdateMemberStatus: (id: string, status: Member['status'], amountPaidDiff: number) => void;
   onAddMember: (name: string, phone: string) => void;
   onRecordLog: (action: string, details: string) => void;
+  onSelectMember?: (member: Member) => void;
 }
 
 export interface BroadcastLog {
@@ -21,6 +22,7 @@ export default function MemberManager({
   onUpdateMemberStatus,
   onAddMember,
   onRecordLog,
+  onSelectMember,
 }: MemberManagerProps) {
   // Search & Filter
   const [searchTerm, setSearchTerm] = useState('');
@@ -213,12 +215,16 @@ export default function MemberManager({
                 {filteredMembers.map((member) => (
                   <tr key={member.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-700">
+                      <div
+                        onClick={() => onSelectMember?.(member)}
+                        className="flex items-center gap-3 cursor-pointer group/item select-none"
+                        title="Klik untuk detail iuran"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center font-bold text-indigo-600 group-hover/item:bg-indigo-600 group-hover/item:text-white transition-all">
                           {member.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900">{member.name}</p>
+                          <p className="font-bold text-slate-900 group-hover/item:text-indigo-600 transition-colors">{member.name}</p>
                           <p className="text-[10px] text-slate-400 font-mono">ID: {member.id}</p>
                         </div>
                       </div>

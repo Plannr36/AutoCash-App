@@ -4,23 +4,35 @@ import { ShieldCheck, Lock, Eye, EyeOff, User, AlertCircle, KeyRound, Sparkles }
 
 interface LoginFormProps {
   onLoginSuccess: (officerName: string, roleName: 'Bendahara 1' | 'Bendahara 2' | 'Sekretaris 1' | 'Sekretaris 2' | 'Wakil Ketua' | 'Ketua') => void;
+  officers: Array<{
+    name: string;
+    role: 'Bendahara 1' | 'Bendahara 2' | 'Sekretaris 1' | 'Sekretaris 2' | 'Wakil Ketua' | 'Ketua';
+    pin: string;
+    avatarColor: string;
+    phone?: string;
+    address?: string;
+    email?: string;
+    bio?: string;
+  }>;
 }
 
-const OFFICER_ACCOUNTS = [
-  { name: 'Mirachel Lovan', role: 'Bendahara 2' as const, pin: 'mirachel123', avatarColor: 'bg-indigo-50 text-indigo-600 border-indigo-100' },
-  { name: 'Retma Ayu Putri', role: 'Bendahara 1' as const, pin: 'retma123', avatarColor: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
-  { name: 'Loris Oktaviano', role: 'Ketua' as const, pin: 'loris123', avatarColor: 'bg-amber-50 text-amber-600 border-amber-100' },
-  { name: 'Bramandika Ramavirio', role: 'Sekretaris 2' as const, pin: 'bram123', avatarColor: 'bg-purple-50 text-purple-600 border-purple-100' },
+const DEFAULT_OFFICERS = [
+  { name: 'Mirachel Lovan', role: 'Bendahara 2' as const, pin: 'mirachel123', avatarColor: 'bg-indigo-50 text-indigo-600 border-indigo-100', phone: '0812-3456-7890', address: 'Debegan RT 01 / RW 03', email: 'mirachel@debegan.org', bio: 'Fokus pada keterbukaan dan ketelitian pencatatan kas.' },
+  { name: 'Retma Ayu Putri', role: 'Bendahara 1' as const, pin: 'retma123', avatarColor: 'bg-emerald-50 text-emerald-600 border-emerald-100', phone: '0857-9876-5432', address: 'Debegan RT 02 / RW 03', email: 'retma@debegan.org', bio: 'Disiplin iuran warga adalah kunci pembangunan Karang Taruna.' },
+  { name: 'Loris Oktaviano', role: 'Ketua' as const, pin: 'loris123', avatarColor: 'bg-amber-50 text-amber-600 border-amber-100', phone: '0899-1111-2222', address: 'Debegan RT 04 / RW 03', email: 'loris@debegan.org', bio: 'Mewujudkan organisasi kepemudaan yang transparan dan akuntabel.' },
+  { name: 'Bramandika Ramavirio', role: 'Sekretaris 2' as const, pin: 'bram123', avatarColor: 'bg-purple-50 text-purple-600 border-purple-100', phone: '0821-4444-5555', address: 'Debegan RT 03 / RW 03', email: 'bram@debegan.org', bio: 'Sinergi dalam administrasi dan pelaporan keuangan.' },
 ];
 
-export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
+export default function LoginForm({ onLoginSuccess, officers }: LoginFormProps) {
   const [selectedOfficerIndex, setSelectedOfficerIndex] = useState<number>(0);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const selectedOfficer = OFFICER_ACCOUNTS[selectedOfficerIndex];
+  // Fallback in case selected index is out of bounds due to deletion
+  const safeIndex = selectedOfficerIndex >= officers.length ? 0 : selectedOfficerIndex;
+  const selectedOfficer = officers[safeIndex] || DEFAULT_OFFICERS[0];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +97,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               </label>
               
               <div className="grid grid-cols-2 gap-2">
-                {OFFICER_ACCOUNTS.map((acc, index) => {
+                {officers.map((acc, index) => {
                   const initials = acc.name
                     .split(' ')
                     .map((n) => n[0])
@@ -212,10 +224,6 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           </form>
         </div>
 
-        {/* Developer Footer */}
-        <div className="border-t border-slate-100 bg-slate-50/50 py-3.5 px-6 text-center text-[9px] text-slate-400 font-semibold uppercase tracking-wider">
-          S1 Akuntansi FEB UNS &bull; Tugas UTS Kelompok 2026
-        </div>
       </motion.div>
     </div>
   );
